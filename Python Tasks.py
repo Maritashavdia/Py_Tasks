@@ -1,6 +1,8 @@
 from itertools import permutations, combinations, product
 from datetime import date, datetime, timedelta
 import calendar
+import time
+import random
 
 # 1. მოცემულია სიტყვა "ABCD". დაბეჭდე ყველა შესაძლო ვარიანტი და **დაითვალე**
 # რამდენია სულ რაოდენობრივად (უნდა დააბრუნო რიცხვი)
@@ -73,3 +75,89 @@ for i in range(1, 4):
     result.extend(combinations(letters, i))
 for c in result:
     print(''.join(c))
+
+
+# 7. თამაში უკუსვლაზე
+
+# კომპიუტერი ირჩევს შემთხვევითობის პრინციპით რიცხვს 1-20 მდე, მოთამაშეს აქვს
+# მხოლოდ 5 წამი რიცხვის გამოსაცნობად, თუ 5 წამში სწორ რიცხვს ვერ შეიყვანს, თამაში
+# სრულდება და გამოდის ტექსტი "დრო ამოიწურა, თქვენ დამარცხდით".
+
+
+number = random.randint(1, 20)
+print('Guess the number between 1 and 20, You have only 5 seconds.')
+start_time = time.time()
+while time.time() - start_time < 5:
+    player_guess = int(input('Enter your number: '))
+    if player_guess == number:
+        print('Congratulations! You won.')
+        break
+    else:
+        print('Please, Try again.')
+else:
+    print("Time's up! You lost.")
+
+
+# 8. ორი მოთამაშე იწყებს "გარბენს". უნდა შეამოწმო რომელი დაასრულებს ნაკლებ დროში.
+
+start = datetime.now()
+player1 = start + timedelta(seconds=random.randint(5,20))
+player2 = start + timedelta(seconds=random.randint(5,20))
+
+if player1 < player2:
+    print('Player 1 wins!')
+elif player2 < player1:
+    print('Player 2 wins!')
+else:
+    print('Draw!')
+
+
+#9 იღბლიანი დაბადების დღე
+
+# მოთამაშემ უნდა შეიყვანოს დაბადების თარიღი და თამაში დაითვლის რამდენი დღეა
+# დარჩენილი შემდეგ დაბადების დღემდე
+
+while True:
+    player_input = input('Enter your birthday in YYYY-MM-DD format: ')
+    try:
+        birthday = datetime.strptime(player_input, "%Y-%m-%d").date()
+        break
+    except ValueError:
+        print('Invalid date format. Please enter the date in YYYY-MM-DD format.')
+
+today = date.today()
+next_birthday = date(today.year, birthday.month, birthday.day)
+
+if next_birthday < today:
+    next_birthday = date(today.year + 1, birthday.month, birthday.day)
+
+days_until_next_birthday = (next_birthday - today).days
+result = f'Your next birthday is in {days_until_next_birthday} days.'
+print(result)
+
+
+#10 საცავი - ჯუნიორ ჰაკერი :)
+
+# თამაში არის შემდეგი - გვაქვს სეიფი რომელსაც აქვს ციფრები 1-6 მდე პაროლი
+# არ ვიცით, ყოველ დღე კომპიუტერი აგენერირებს ახალ პაროლს (შემთხვევითობის პრინციპით)
+# პაროლი არის 4 ციფრიანი. ჩვენი მიზანია დავწეროთ ისეთი კოდი რომელიც შეამოწმებს
+# ვარიანტებს და როცა მოხდება კომპიუტერის მიერ დაგენერირებული პაროლის დამთხვევა
+# უნდა გამოვიტანოთ შეტყობინება "პაროლი სწორია, საცავი გახსნილია", აუცილებელი პირობაა
+# გამოვიტანოთ ყველა ჩვენს მიერ ნაცადი პაროლი სანამ მივალთ სწორ ვარიანტამდე.
+
+
+today = date.today()
+random.seed(today.toordinal())
+
+password = ''.join(str(random.randint(1, 6)) for i in range(4))
+print('The safe password has been generated. Let\'s start cracking it!')
+total_attempts = 0
+
+for attempts in product('123456', repeat=4):
+    attempt = ''.join(attempts)
+    print(f'Cracking... {attempt}')
+    total_attempts += 1
+    if attempt == password:
+        print(f'\nPassword is correct, safe opened!')
+        print(f'Password: {attempt}, Total attempts: {total_attempts}')
+        break
